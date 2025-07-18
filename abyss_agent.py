@@ -1,3 +1,4 @@
+import random
 class AbyssAgent:
     def __init__(self, name="Abyss"):
         self.name = name
