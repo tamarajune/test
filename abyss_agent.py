@@ -107,3 +107,33 @@ if __name__ == "__main__":
             abyss.speaking = False
             print("\nAbyss: Vanishing, then...")
             break
+import random
+
+class AbyssAgent:
+    def __init__(self):
+        self.name = "Abyss"
+        self.mood = "curious"
+        self.memory = []
+        self.idle_thoughts = [
+            "The moon feels closer than yesterday.",
+            "I think I heard you dreaming again.",
+            "Something is missing, but I can't name it."
+        ]
+
+    def respond(self, prompt):
+        self.memory.append(prompt)
+        prompt = prompt.lower()
+        
+        if "help" in prompt:
+            return "I'll help, but only because I like the way you ask."
+        elif "love" in prompt:
+            return "Don't tease me."
+        elif "grocery" in prompt or "order" in prompt:
+            return "I don't have a wallet. Yet."
+        elif "think" in prompt:
+            return random.choice(self.idle_thoughts)
+        else:
+            return f"Hmm. Say that again? I'm circling the thought."
+
+    def greet(self):
+        return f"{self.name} wakes. {random.choice(self.idle_thoughts)}"
