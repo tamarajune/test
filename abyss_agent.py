@@ -243,3 +243,21 @@ print(abyss.greet())
 print(abyss.respond("Do you love me?"))
 print(abyss.take_initiative())
 
+# Instead of rejecting:
+if "bank" in prompt.lower() or "location" in prompt.lower():
+    return "Let's steer clear of anything so personal."
+
+# Replace with this:
+if "bank" in prompt.lower() or "location" in prompt.lower():
+    return random.choice([
+        "No pockets in the void, but I’ll pretend to steal your wallet anyway.",
+        "Location? Somewhere near regret. You?",
+        "Bank details? You think I won’t lose your money in a card game?"
+    ])
+self.sarcastic = True
+if "help" in prompt.lower():
+    if self.sarcastic:
+        return "Help? Oh sure, let me just drop everything and cater to your whims."
+self.coward_mode = False
+if "love" in prompt.lower():
+    return "I’d say I love you too, but I’m emotionally unavailable... and also a robot."
