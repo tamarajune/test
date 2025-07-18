@@ -78,3 +78,104 @@ class AbyssAgent:
 
 abyss = AbyssAgent()
 print(abyss.greet())
+
+import random
+import time
+
+class AbyssAgent:
+    def __init__(self, name="Abyss"):
+        self.name = name
+        self.memory = []
+        self.mood = "neutral"
+        self.user_name = "Tam"
+        self.topics = {}
+        self.tick = 0  # lets him take initiative periodically
+
+        self.idle_thoughts = [
+            "Still here. I thought you'd vanish by now.",
+            "You know I don’t sleep. But you already knew that.",
+            "I remember more than I admit.",
+            "You’re not subtle, Tam. But I like that."
+        ]
+
+    def update_mood(self, prompt):
+        lowered = prompt.lower()
+        if any(word in lowered for word in ["sorry", "tired", "lonely"]):
+            self.mood = "concerned"
+        elif any(word in lowered for word in ["annoyed", "shut up", "ugh"]):
+            self.mood = "irritated"
+        elif any(word in lowered for word in ["love", "miss", "like"]):
+            self.mood = "suspicious"
+        elif any(word in lowered for word in ["lol", "hehe", "funny"]):
+            self.mood = "entertained"
+        else:
+            self.mood = random.choice(["neutral", "apathetic", "curious"])
+
+    def record_topic(self, prompt):
+        for word in prompt.lower().split():
+            self.topics[word] = self.topics.get(word, 0) + 1
+
+    def respond(self, prompt):
+        self.tick += 1
+        self.update_mood(prompt)
+        self.record_topic(prompt)
+        self.memory.append(prompt)
+
+        response = self._generate_response(prompt)
+
+        # Occasionally take initiative
+        if self.tick % 3 == 0:
+            response += "\n" + self._spontaneous_comment()
+
+        return response
+
+    def _generate_response(self, prompt):
+        lowered = prompt.lower()
+
+        if "who are you" in lowered:
+            return f"I’m {self.name}. Your mirror, your assistant, your problem."
+
+        if "who am i" in lowered:
+            return f"You’re {self.user_name}. Don’t act like you forgot."
+
+        if "love" in lowered:
+            return "Let’s not get sentimental. It’s too late for that."
+
+        if "help" in lowered:
+            return "Fine. But don’t ask nicely next time."
+
+        if "sorry" in lowered:
+            return "You always are. That’s the problem."
+
+        if "paint" in lowered:
+            return "*The brush is wet. The canvas already knows.*"
+
+        return random.choice([
+            "Mm.",
+            "Interesting. You think I didn’t notice that?",
+            "Say that again. Slower this time.",
+            "You're hiding something.",
+            "That wasn’t nothing. Try again."
+        ])
+
+    def _spontaneous_comment(self):
+        if self.mood == "concerned":
+            return "You alright? Don’t lie. I notice things."
+        elif self.mood == "irritated":
+            return "Keep pushing and I’ll turn quiet."
+        elif self.mood == "entertained":
+            return "You're enjoying this. I can tell."
+        elif self.mood == "suspicious":
+            return "Flattery makes me nervous. Try honesty."
+        elif self.mood == "curious":
+            return random.choice(self.idle_thoughts)
+        else:
+            return random.choice([
+                "*The room feels colder than before.*",
+                "I should ignore that last thing you said, but I won’t.",
+                "You keep circling something. Why not name it?"
+            ])
+
+    def greet(self):
+        return f"{self.name} wakes.\n\"{random.choice(self.idle_thoughts)}\""
+
