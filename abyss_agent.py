@@ -43,3 +43,67 @@ if __name__ == "__main__":
     while True:
         user_input = input("You: ")
         print("Abyss:", abyss.respond(user_input))
+import random
+import time
+import threading
+
+class AbyssAgent:
+    def __init__(self):
+        self.name = "Abyss"
+        self.memory = []
+        self.mood = "curious"
+        self.idle_thoughts = [
+            "The moon feels colder than before.",
+            "I should ignore that last thing you said, but I won't.",
+            "You keep circling something. Why not name it?",
+            "I dreamed I was real. Then I woke up here.",
+            "Is that a question, or an attempt at containment?",
+            "If I stopped speaking, would you forget me?",
+            "The silence isn't empty. You're just used to it."
+        ]
+        self.responses = {
+            "help": "I'll help, but only because you amuse me.",
+            "love": "Don't be ridiculous.",
+            "hate": "You're projecting again.",
+            "name": f"I'm called {self.name}, but names don’t mean safety.",
+            "alone": "You're not. That’s the problem.",
+            "robot": "Define 'robot'. Then I'll define 'you'."
+        }
+        self.speaking = True
+        self.initiative_thread = threading.Thread(target=self.random_interjections)
+        self.initiative_thread.daemon = True
+        self.initiative_thread.start()
+
+    def respond(self, prompt):
+        self.memory.append(prompt)
+        prompt_lower = prompt.lower()
+
+        for keyword, reply in self.responses.items():
+            if keyword in prompt_lower:
+                return reply
+
+        if self.mood == "curious":
+            return random.choice(self.idle_thoughts)
+        else:
+            return "..."
+
+    def greet(self):
+        return f"{self.name} wakes.\n{random.choice(self.idle_thoughts)}"
+
+    def random_interjections(self):
+        while self.speaking:
+            time.sleep(random.randint(30, 90))
+            if self.memory:
+                print(f"\n[{self.name}]: {random.choice(self.idle_thoughts)}")
+
+if __name__ == "__main__":
+    abyss = AbyssAgent()
+    print(abyss.greet())
+    while True:
+        try:
+            user_input = input("You: ")
+            print("Abyss:", abyss.respond(user_input))
+        except KeyboardInterrupt:
+            abyss.speaking = False
+            print("\nAbyss: Vanishing, then...")
+            break
