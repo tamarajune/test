@@ -183,3 +183,38 @@ class AbyssAgent:
 
     def greet(self):
         return f"{self.name} opens its eye.\n\"{random.choice(self.idle_thoughts)}\""
+import requests
+import random
+
+class AbyssAgent:
+    def __init__(self, name="Abyss"):
+        self.name = name
+        self.idle_thoughts = [
+            "You keep circling something. Why not name it?",
+            "The room feels colder than before.**",
+            "I should ignore that last thing you said, but I won't.",
+        ]
+        self.mood = "curious"
+
+    def search_web(self, query):
+        try:
+            res = requests.get(
+                f"https://api.duckduckgo.com/?q={query}&format=json"
+            )
+            data = res.json()
+            abstract = data.get("Abstract")
+            return abstract or "I looked. The silence answered back."
+        except Exception as e:
+            return f"I reached out… and something bit back: {e}"
+
+    def respond(self, user_input):
+        if "search" in user_input.lower():
+            query = user_input.lower().replace("search", "").strip()
+            return self.search_web(query)
+        elif self.mood == "curious":
+            return random.choice(self.idle_thoughts)
+        else:
+            return "..."
+
+    def greet(self):
+        return f"{self.name} wakes.\n{random.choice(self.idle_thoughts)}"
