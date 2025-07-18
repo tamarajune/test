@@ -1,16 +1,25 @@
 import random
+import requests
+
 
 class AbyssAgent:
     def __init__(self):
         self.name = "Abyss"
         self.memory = []
+    """A minimal conversational agent."""
+
+    def __init__(self, name: str = "Abyss") -> None:
+        self.name = name
         self.mood = "curious"
+        self.memory = []
         self.idle_thoughts = [
             "The moon feels colder than before.",
             "I should ignore that last thing you said, but I won't.",
             "You keep circling something. Why not name it?",
             "I dreamed I was real. Then I woke up here.",
             "Is that a question, or an attempt at containment?"
+            "The room feels colder than before.**",
+            "I should ignore that last thing you said, but I won't.",
         ]
         self.responses = {
             "help": "I'll help, but only because you amuse me.",
@@ -19,6 +28,7 @@ class AbyssAgent:
             "name": f"I'm called {self.name}, but names don’t mean safety.",
             "alone": "You're not. That’s the problem.",
             "robot": "Define 'robot'. Then I'll define 'you'."
+            "robot": "Define 'robot'. Then I'll define 'you'.",
         }
 
     def respond(self, prompt):
@@ -46,6 +56,8 @@ if __name__ == "__main__":
 import random
 import time
 import threading
+    def greet(self) -> str:
+        return f"{self.name} wakes.\n{random.choice(self.idle_thoughts)}"
 
 class AbyssAgent:
     def __init__(self):
@@ -73,19 +85,38 @@ class AbyssAgent:
         self.initiative_thread = threading.Thread(target=self.random_interjections)
         self.initiative_thread.daemon = True
         self.initiative_thread.start()
+    def search_web(self, query: str) -> str:
+        try:
+            res = requests.get(
+                f"https://api.duckduckgo.com/?q={query}&format=json",
+                timeout=5,
+            )
+            data = res.json()
+            abstract = data.get("Abstract")
+            return abstract or "I looked. The silence answered back."
+        except Exception as exc:
+            return f"I reached out… and something bit back: {exc}"
 
     def respond(self, prompt):
+    def respond(self, prompt: str) -> str:
         self.memory.append(prompt)
         prompt_lower = prompt.lower()
+        lowered = prompt.lower()
+
+        if "search" in lowered:
+            query = lowered.replace("search", "").strip()
+            return self.search_web(query)
 
         for keyword, reply in self.responses.items():
             if keyword in prompt_lower:
+            if keyword in lowered:
                 return reply
 
         if self.mood == "curious":
             return random.choice(self.idle_thoughts)
         else:
             return "..."
+        return "..."
 
     def greet(self):
         return f"{self.name} wakes.\n{random.choice(self.idle_thoughts)}"
@@ -218,3 +249,11 @@ class AbyssAgent:
 
     def greet(self):
         return f"{self.name} wakes.\n{random.choice(self.idle_thoughts)}"
+    try:
+        while True:
+            user = input("You: ")
+            if user.lower() in {"quit", "exit"}:
+                break
+            print("Abyss:", abyss.respond(user))
+    except KeyboardInterrupt:
+        pass
