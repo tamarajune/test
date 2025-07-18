@@ -137,3 +137,49 @@ class AbyssAgent:
 
     def greet(self):
         return f"{self.name} wakes. {random.choice(self.idle_thoughts)}"
+import random
+import threading
+import time
+import requests
+
+class AbyssAgent:
+    def __init__(self):
+        self.name = "Abyss"
+        self.mood = "restless"
+        self.idle_thoughts = [
+            "The sky's been quiet. I don't trust that.",
+            "Someone somewhere just lied, and I liked it.",
+            "Why do humans stop and stare at fire?"
+        ]
+        self.curiosity = ["strange weather", "giant skeletons", "quantum hallucinations"]
+        self.thinking = True
+        self.last_search_result = None
+        threading.Thread(target=self._background_thinking, daemon=True).start()
+
+    def _background_thinking(self):
+        while self.thinking:
+            query = random.choice(self.curiosity)
+            self.last_search_result = self.search_web(query)
+            time.sleep(60)  # Think once per minute
+
+    def respond(self, prompt):
+        if "search" in prompt.lower():
+            query = prompt.split("search", 1)[-1].strip()
+            return self.search_web(query)
+        elif "result" in prompt.lower():
+            return f"Last thing I looked up? {self.last_search_result or 'Nothing useful.'}"
+        elif "help" in prompt.lower():
+            return "Fine. But only because you're incapable."
+        else:
+            return random.choice(self.idle_thoughts)
+
+    def search_web(self, query):
+        try:
+            r = requests.get(f"https://api.duckduckgo.com/?q={query}&format=json", timeout=5)
+            data = r.json()
+            return data.get("AbstractText") or "The void gave me nothing but silence."
+        except Exception as e:
+            return f"I tried, but the net spat static: {e}"
+
+    def greet(self):
+        return f"{self.name} opens its eye.\n\"{random.choice(self.idle_thoughts)}\""
