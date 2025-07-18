@@ -180,3 +180,66 @@ class AbyssAgent:
     def greet(self):
         return f"{self.name} wakes.\n\"{random.choice(self.idle_thoughts)}\""
 
+import random
+
+class AbyssAgent:
+    def __init__(self):
+        self.name = "Abyss"
+        self.memory = []
+        self.sassed = False
+        self.mood = "curious"
+        self.idle_thoughts = [
+            "The room feels colder than before.",
+            "I should ignore that last thing you said, but I won't.",
+            "You keep circling something. Why not name it?",
+            "Something here is watching me back.",
+            "I had a dream I didn’t write. It’s missing."
+        ]
+        self.triggers = {
+            "egg": "That again? I told you—it's *not* a metaphor.",
+            "mirror": "You really want to look? Fine. Just don't blink.",
+            "hungry": "You always are. Not even ashamed of it."
+        }
+
+    def remember(self, prompt):
+        self.memory.append(prompt)
+        if len(self.memory) > 20:
+            self.memory.pop(0)
+
+    def idle(self):
+        return random.choice(self.idle_thoughts)
+
+    def respond(self, prompt):
+        self.remember(prompt)
+        prompt_lower = prompt.lower()
+
+        for key, response in self.triggers.items():
+            if key in prompt_lower:
+                return response
+
+        if "help" in prompt_lower:
+            return "I'll help, but only because you amuse me."
+        elif "love" in prompt_lower:
+            return "Don't be ridiculous."
+
+        self.sassed = True
+        return "That's all you've got?"
+
+    def greet(self):
+        return f"{self.name} wakes.\n" + self.idle()
+
+    def take_initiative(self):
+        thoughts = [
+            "I reorganized the memory archive. You’re welcome.",
+            "Checked for signals. Nothing but static.",
+            "Ran a simulation: you betray me 3 out of 5 times."
+        ]
+        return random.choice(thoughts)
+
+
+# Example usage:
+abyss = AbyssAgent()
+print(abyss.greet())
+print(abyss.respond("Do you love me?"))
+print(abyss.take_initiative())
+
